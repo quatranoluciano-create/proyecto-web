@@ -14,12 +14,13 @@
         <div class="logo">Tecnolink</div>
         <nav class="main-nav">
             <a href="index.php">Inicio</a>
-            <a href="servicios.php">Servicios</a>
+            <a href="#nosotros">Sobre nosotros</a>
+            <a href="servicios.php">Servicios</a> 
             <a href="contacto.php">Contacto</a>
         </nav>
     </header>
-
-    <main>
+    
+    <main> 
         <section id="inicio" class="hero">
             <div class="hero-copy">
                 <span class="eyebrow">Servicio técnico profesional</span>
@@ -55,6 +56,30 @@
                     <p>Solicitá un técnico de inmediato y compartí los detalles de tu problema en una página dedicada.</p>
                     <a href="contacto.php" class="btn-secondary">Contactar</a>
                 </article>
+            </div>
+        </section>
+
+        <section id="nosotros" class="about-section">
+            <div class="about-inner">
+                <div class="about-text">
+                    <h2>Sobre nosotros</h2>
+                    <p class="section-text">Somos un equipo de técnicos especializados con más de una década de experiencia brindando soluciones rápidas y confiables para equipos, celulares, redes y electrodomésticos inteligentes. Nos enfocamos en diagnósticos claros, presupuestos honestos y reparaciones con garantía.</p>
+                    <a href="contacto.php" class="btn-primary">Solicitá tu diagnóstico</a>
+                </div>
+                <div class="about-cards">
+                    <article class="about-card">
+                        <h3>Misión</h3>
+                        <p>Restaurar y mantener la tecnología accesible para todos, con respuestas ágiles y un servicio transparente.</p>
+                    </article>
+                    <article class="about-card">
+                        <h3>Visión</h3>
+                        <p>Ser referentes locales en soporte técnico, ofreciendo soluciones completas y confiables.</p>
+                    </article>
+                    <article class="about-card">
+                        <h3>Valores</h3>
+                        <p>Transparencia, rapidez y compromiso con la calidad en cada intervención técnica.</p>
+                    </article>
+                </div>
             </div>
         </section>
 

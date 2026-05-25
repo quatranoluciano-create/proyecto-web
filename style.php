@@ -12,14 +12,17 @@
 
         <div class="contacto-info">
             <h2>Contacta un <span>Tecnico</span></h2>
-            <p>Completa el formulario y te respondemos en menos de 1 hora.</p>
-            <p>Servicio en toda el área metropolitana</p>
-            <p>Lunes a sábado de 9:00 a 20:00</p>
-            <p>WhatsApp: +54 11 XXXX-XXXX</p>
-        </div>
-
-        <div class="formulario">
-            <h3>Solicitar técnico</h3>
+            <p>Completa el formulario y te respondemos en menos de 1 hora. Atención rápida para tu equipo, tu hogar y tu trabajo.</p>
+            <p><strong>Servicios incluidos:</strong></p>
+            <ul>
+                <li>Diagnóstico inicial sin cargo.</li>
+                <li>Presupuestos claros y reparaciones con garantía.</li>
+                <li>Repuestos originales o compatibles según tu preferencia.</li>
+                <li>Soporte remoto y asistencia presencial.</li>
+            </ul>
+            <p>Servicio en toda el área metropolitana, de lunes a sábado de 9:00 a 20:00.</p>
+            <p>WhatsApp directo: <strong>+54 11 XXXX-XXXX</strong></p>
+            <div class="contact-highlight">Te ayudamos a solucionar tu equipo hoy mismo con transparencia, rapidez y respaldo técnico.</div>
 
             <label>Nombre:</label>
             <input type="text" placeholder="Tu nombre completo">
