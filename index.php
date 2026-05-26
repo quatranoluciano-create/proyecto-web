@@ -1,90 +1,158 @@
 <?php
-    session_start(); 
+require_once __DIR__ . '/includes/config.php';
+
+$busqueda = trim($_GET['q'] ?? '');
+$filtro_tipo = $_GET['tipo'] ?? '';
+$filtro_zona = trim($_GET['zona'] ?? '');
+
+$trabajos_filtrados = array_filter($trabajos_destacados, function ($trabajo) use ($busqueda, $filtro_tipo, $filtro_zona) {
+    $coincide_busqueda = $busqueda === ''
+        || stripos($trabajo['titulo'], $busqueda) !== false
+        || stripos($trabajo['descripcion'], $busqueda) !== false;
+
+    $coincide_tipo = $filtro_tipo === '' || $trabajo['tipo'] === $filtro_tipo;
+    $coincide_zona = $filtro_zona === '' || stripos($trabajo['zona'], $filtro_zona) !== false;
+
+    return $coincide_busqueda && $coincide_tipo && $coincide_zona;
+});
+
+$total = count($trabajos_filtrados);
+$titulo_pagina = 'Buscar trabajos técnicos';
+require_once __DIR__ . '/includes/header.php';
 ?>
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tecnolink - Servicio técnico rápido</title>
-    <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-    <header class="site-header">
-        <div class="logo">Tecnolink</div>
-        <nav class="main-nav">
-            <a href="index.php">Inicio</a>
-            <a href="#nosotros">Sobre nosotros</a>
-            <a href="servicios.php">Servicios</a> 
-            <a href="contacto.php">Contacto</a>
-        </nav>
-    </header>
-    
-    <main> 
-        <section id="inicio" class="hero">
-            <div class="hero-copy">
-                <span class="eyebrow">Servicio técnico profesional</span>
-                <h1>tecnolink</h1>
-                <p class="hero-text">Soluciones rápidas y confiables para computadoras, celulares, redes y electrodomésticos. Atención a domicilio, asistencia remota y diagnóstico exprés.</p>
-                <a href="contacto.php" class="btn-primary">Solicitar técnico</a>
-            </div>
-            <div class="hero-card">
-                <div class="hero-card-inner">
-                    <div class="card-badge">Más rápido</div>
-                    <h2>Tu equipo listo en pocas horas</h2>
-                    <p>Nos ocupamos de que tu problema sea atendido con prioridad y sin complicaciones.</p>
-                    <p>Experiencia en reparación de hardware, software y redes con servicio seguro y cercano.</p>
-                </div>
-            </div>
-        </section>
 
-        <section class="home-links">
-            <h2>Elegí una sección independiente</h2>
-            <div class="cards">
-                <article class="link-card">
-                    <h3>Sobre nosotros</h3>
-                    <p>Conocé quiénes somos, qué hacemos y cómo trabajamos para resolver tus urgencias técnicas.</p>
-                    <a href="nosotros.php" class="btn-secondary">Ver más</a>
-                </article>
-                <article class="link-card">
-                    <h3>Servicios</h3>
-                    <p>Explorá todas las soluciones disponibles para equipos, celulares, redes y dispositivos inteligentes.</p>
-                    <a href="servicios.php" class="btn-secondary">Ver servicios</a>
-                </article>
-                <article class="link-card">
-                    <h3>Contacto</h3>
-                    <p>Solicitá un técnico de inmediato y compartí los detalles de tu problema en una página dedicada.</p>
-                    <a href="contacto.php" class="btn-secondary">Contactar</a>
-                </article>
-            </div>
-        </section>
+<main>
+    <section class="jobs-hero">
+        <div class="jobs-hero-inner">
+            <span class="eyebrow">Portal de servicios técnicos</span>
+            <h1>Encontrá el trabajo técnico que necesitás</h1>
+            <p class="hero-text">Buscá por especialidad, zona o palabra clave. Inspirado en portales de empleo, adaptado a reparaciones, redes y soporte IT.</p>
 
-        <section id="nosotros" class="about-section">
-            <div class="about-inner">
-                <div class="about-text">
-                    <h2>Sobre nosotros</h2>
-                    <p class="section-text">Somos un equipo de técnicos especializados con más de una década de experiencia brindando soluciones rápidas y confiables para equipos, celulares, redes y electrodomésticos inteligentes. Nos enfocamos en diagnósticos claros, presupuestos honestos y reparaciones con garantía.</p>
-                    <a href="contacto.php" class="btn-primary">Solicitá tu diagnóstico</a>
+            <form class="jobs-search" method="get" action="index.php">
+                <div class="search-field">
+                    <label for="q">¿Qué buscás?</label>
+                    <input type="text" id="q" name="q" placeholder="Ej: notebook, WiFi, pantalla..." value="<?php echo htmlspecialchars($busqueda); ?>">
                 </div>
-                <div class="about-cards">
-                    <article class="about-card">
-                        <h3>Misión</h3>
-                        <p>Restaurar y mantener la tecnología accesible para todos, con respuestas ágiles y un servicio transparente.</p>
-                    </article>
-                    <article class="about-card">
-                        <h3>Visión</h3>
-                        <p>Ser referentes locales en soporte técnico, ofreciendo soluciones completas y confiables.</p>
-                    </article>
-                    <article class="about-card">
-                        <h3>Valores</h3>
-                        <p>Transparencia, rapidez y compromiso con la calidad en cada intervención técnica.</p>
-                    </article>
+                <div class="search-field">
+                    <label for="tipo">Especialidad</label>
+                    <select id="tipo" name="tipo">
+                        <option value="">Todas</option>
+                        <?php foreach ($tipos_trabajo as $clave => $etiqueta) : ?>
+                            <option value="<?php echo $clave; ?>"<?php echo $filtro_tipo === $clave ? ' selected' : ''; ?>><?php echo htmlspecialchars($etiqueta); ?></option>
+                        <?php endforeach; ?>
+                    </select>
                 </div>
-            </div>
-        </section>
+                <div class="search-field">
+                    <label for="zona">Zona</label>
+                    <input type="text" id="zona" name="zona" placeholder="CABA, GBA, Remoto..." value="<?php echo htmlspecialchars($filtro_zona); ?>">
+                </div>
+                <button type="submit" class="btn-primary">Buscar</button>
+            </form>
 
-    </main>
-</body>
-</html>
- 
- 
+            <div class="hero-quick-tags">
+                <?php foreach (array_slice($tipos_trabajo, 0, 4, true) as $clave => $etiqueta) : ?>
+                    <a href="index.php?tipo=<?php echo urlencode($clave); ?>" class="tag-chip"><?php echo htmlspecialchars($etiqueta); ?></a>
+                <?php endforeach; ?>
+            </div>
+        </div>
+    </section>
+
+    <section class="jobs-layout">
+        <aside class="jobs-filters">
+            <h2>Filtros</h2>
+            <form method="get" class="filters-form">
+                <?php if ($busqueda !== '') : ?>
+                    <input type="hidden" name="q" value="<?php echo htmlspecialchars($busqueda); ?>">
+                <?php endif; ?>
+                <?php if ($filtro_zona !== '') : ?>
+                    <input type="hidden" name="zona" value="<?php echo htmlspecialchars($filtro_zona); ?>">
+                <?php endif; ?>
+
+                <fieldset>
+                    <legend>Especialidad</legend>
+                    <?php foreach ($tipos_trabajo as $clave => $etiqueta) : ?>
+                        <label class="filter-option">
+                            <input type="radio" name="tipo" value="<?php echo $clave; ?>"<?php echo $filtro_tipo === $clave ? ' checked' : ''; ?> onchange="this.form.submit()">
+                            <?php echo htmlspecialchars($etiqueta); ?>
+                        </label>
+                    <?php endforeach; ?>
+                    <label class="filter-option">
+                        <input type="radio" name="tipo" value=""<?php echo $filtro_tipo === '' ? ' checked' : ''; ?> onchange="this.form.submit()">
+                        Ver todas
+                    </label>
+                </fieldset>
+            </form>
+
+            <div class="filter-cta">
+                <p>¿Sos cliente registrado?</p>
+                <a href="<?php echo usuario_logueado() ? 'cliente.php' : 'login.php'; ?>" class="btn-secondary btn-block">Mi área de cliente</a>
+            </div>
+        </aside>
+
+        <div class="jobs-results">
+            <div class="results-header">
+                <h2><?php echo $total; ?> trabajos encontrados</h2>
+                <span class="sort-label">Ordenar: relevancia</span>
+            </div>
+
+            <?php if ($total === 0) : ?>
+                <article class="job-card empty-state">
+                    <h3>No hay resultados</h3>
+                    <p>Probá con otra palabra clave o quitá los filtros para ver más trabajos técnicos disponibles.</p>
+                    <a href="index.php" class="btn-secondary">Ver todos</a>
+                </article>
+            <?php else : ?>
+                <?php foreach ($trabajos_filtrados as $trabajo) : ?>
+                    <article class="job-card" data-tipo="<?php echo htmlspecialchars($trabajo['tipo']); ?>">
+                        <?php if ($trabajo['urgente']) : ?>
+                            <span class="job-badge">Urgente</span>
+                        <?php endif; ?>
+                        <h3><?php echo htmlspecialchars($trabajo['titulo']); ?></h3>
+                        <ul class="job-meta">
+                            <li><?php echo htmlspecialchars($trabajo['zona']); ?></li>
+                            <li><?php echo htmlspecialchars($trabajo['modalidad']); ?></li>
+                            <li><?php echo htmlspecialchars(etiqueta_tipo($trabajo['tipo'])); ?></li>
+                        </ul>
+                        <p><?php echo htmlspecialchars($trabajo['descripcion']); ?></p>
+                        <div class="job-card-footer">
+                            <span class="job-date">Publicado el <?php echo htmlspecialchars($trabajo['fecha']); ?></span>
+                            <a href="contacto.php" class="btn-secondary">Solicitar técnico</a>
+                        </div>
+                    </article>
+                <?php endforeach; ?>
+            <?php endif; ?>
+        </div>
+    </section>
+
+    <section id="reseñas" class="reviews-section">
+        <h2>Reseñas de trabajos anteriores</h2>
+        <p class="section-text">Lo que dicen nuestros clientes después de cada servicio técnico.</p>
+        <div class="reviews-grid">
+            <?php foreach ($reseñas as $reseña) : ?>
+                <article class="review-card">
+                    <div class="stars" aria-label="<?php echo $reseña['estrellas']; ?> de 5 estrellas">
+                        <?php echo str_repeat('★', $reseña['estrellas']) . str_repeat('☆', 5 - $reseña['estrellas']); ?>
+                    </div>
+                    <h3><?php echo htmlspecialchars($reseña['nombre']); ?></h3>
+                    <span class="review-job"><?php echo htmlspecialchars($reseña['trabajo']); ?></span>
+                    <p><?php echo htmlspecialchars($reseña['texto']); ?></p>
+                </article>
+            <?php endforeach; ?>
+        </div>
+    </section>
+
+    <section class="cta-banner">
+        <div>
+            <h2>¿Necesitás un técnico ahora?</h2>
+            <p>Registrate, seguí tus pedidos y dejá tu reseña cuando terminemos el trabajo.</p>
+        </div>
+        <div class="cta-actions">
+            <a href="contacto.php" class="btn-primary">Solicitar técnico</a>
+            <?php if (!usuario_logueado()) : ?>
+                <a href="login.php" class="btn-secondary">Crear acceso cliente</a>
+            <?php endif; ?>
+        </div>
+    </section>
+</main>
+
+<?php require_once __DIR__ . '/includes/footer.php'; ?>
