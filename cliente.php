@@ -61,7 +61,7 @@ $nombre = $_SESSION['nombre'] ?? $_SESSION['usuario'];
                     <article class="client-job-item">
                         <div>
                             <h3><?php echo htmlspecialchars($trabajo['titulo']); ?></h3>
-                            <p><?php echo htmlspecialchars(etiqueta_tipo($trabajo['tipo'])); ?> · <?php echo htmlspecialchars($trabajo['fecha']); ?></p>
+                            <p><?php echo htmlspecialchars(obtener_etiqueta_tipo($trabajo['tipo'])); ?> · <?php echo htmlspecialchars($trabajo['fecha']); ?></p>
                         </div>
                         <span class="status-pill status-<?php echo strtolower(str_replace(' ', '-', $trabajo['estado'])); ?>"><?php echo htmlspecialchars($trabajo['estado']); ?></span>
                     </article>

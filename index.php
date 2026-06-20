@@ -111,7 +111,7 @@ require_once __DIR__ . '/includes/header.php';
                         <ul class="job-meta">
                             <li><?php echo htmlspecialchars($trabajo['zona']); ?></li>
                             <li><?php echo htmlspecialchars($trabajo['modalidad']); ?></li>
-                            <li><?php echo htmlspecialchars(etiqueta_tipo($trabajo['tipo'])); ?></li>
+                            <li><?php echo htmlspecialchars(obtener_etiqueta_tipo($trabajo['tipo'])); ?></li>
                         </ul>
                         <p><?php echo htmlspecialchars($trabajo['descripcion']); ?></p>
                         <div class="job-card-footer">
