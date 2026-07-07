@@ -12,9 +12,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = trim($_POST['email'] ?? '');
     $clave = $_POST['clave'] ?? '';
 
-    if (isset($usuarios_demo[$email]) && $usuarios_demo[$email]['clave'] === $clave) {
-        $_SESSION['usuario'] = $email;
-        $_SESSION['nombre'] = $usuarios_demo[$email]['nombre'];
+    $pdo = obtener_conexion();
+    $consulta = $pdo->prepare('SELECT id, nombre, email, clave_hash FROM usuarios WHERE email = :email');
+    $consulta->execute(['email' => $email]);
+    $usuario = $consulta->fetch();
+
+    if ($usuario && password_verify($clave, $usuario['clave_hash'])) {
+        session_regenerate_id(true);
+        $_SESSION['usuario_id'] = $usuario['id'];
+        $_SESSION['usuario'] = $usuario['email'];
+        $_SESSION['nombre'] = $usuario['nombre'];
         header('Location: cliente.php');
         exit;
     }

@@ -208,6 +208,26 @@ function formatear_fecha(string $fecha, string $formato = 'd/m/Y'): string
 }
 
 /**
+ * Convierte una fecha en formato YYYY-MM-DD (como viene de MySQL) a
+ * un formato legible en español, ej: "22 mayo 2026".
+ */
+function formatear_fecha_es(string $fecha_mysql): string
+{
+    $meses = [
+        1 => 'enero', 2 => 'febrero', 3 => 'marzo', 4 => 'abril',
+        5 => 'mayo', 6 => 'junio', 7 => 'julio', 8 => 'agosto',
+        9 => 'septiembre', 10 => 'octubre', 11 => 'noviembre', 12 => 'diciembre',
+    ];
+
+    $fecha_obj = DateTime::createFromFormat('Y-m-d', $fecha_mysql);
+    if (!$fecha_obj) {
+        return $fecha_mysql;
+    }
+
+    return $fecha_obj->format('d') . ' ' . $meses[(int) $fecha_obj->format('n')] . ' ' . $fecha_obj->format('Y');
+}
+
+/**
  * Calcula el tiempo transcurrido desde una fecha
  */
 function tiempo_transcurrido(string $fecha): string

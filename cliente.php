@@ -2,26 +2,17 @@
 require_once __DIR__ . '/includes/config.php';
 requiere_login();
 
-$mis_trabajos = [
-    [
-        'titulo' => 'Notebook no enciende',
-        'estado' => 'En curso',
-        'tipo' => 'computadoras',
-        'fecha' => '20 mayo 2026',
-    ],
-    [
-        'titulo' => 'Optimización WiFi hogar',
-        'estado' => 'Finalizado',
-        'tipo' => 'redes',
-        'fecha' => '10 mayo 2026',
-    ],
-    [
-        'titulo' => 'Backup y limpieza PC',
-        'estado' => 'Finalizado',
-        'tipo' => 'remoto',
-        'fecha' => '02 mayo 2026',
-    ],
-];
+$pdo = obtener_conexion();
+$consulta = $pdo->prepare(
+    'SELECT titulo, estado, tipo, fecha
+     FROM trabajos
+     WHERE usuario_id = :usuario_id
+     ORDER BY fecha DESC'
+);
+$consulta->execute(['usuario_id' => $_SESSION['usuario_id']]);
+$mis_trabajos = $consulta->fetchAll();
+
+$reseñas = $pdo->query('SELECT nombre, trabajo_titulo AS trabajo, estrellas, texto FROM resenas ORDER BY creado_en DESC')->fetchAll();
 
 $titulo_pagina = 'Mi cuenta';
 require_once __DIR__ . '/includes/header.php';
@@ -38,17 +29,22 @@ $nombre = $_SESSION['nombre'] ?? $_SESSION['usuario'];
         <a href="contacto.php" class="btn-primary">Nuevo pedido</a>
     </section>
 
+    <?php
+        $total_trabajos = count($mis_trabajos);
+        $total_finalizados = count(array_filter($mis_trabajos, fn($t) => $t['estado'] === 'Finalizado'));
+        $total_en_curso = count(array_filter($mis_trabajos, fn($t) => $t['estado'] === 'En curso'));
+    ?>
     <section class="client-stats">
         <article class="stat-card">
-            <strong>3</strong>
+            <strong><?php echo $total_trabajos; ?></strong>
             <span>Trabajos registrados</span>
         </article>
         <article class="stat-card">
-            <strong>2</strong>
+            <strong><?php echo $total_finalizados; ?></strong>
             <span>Finalizados</span>
         </article>
         <article class="stat-card">
-            <strong>1</strong>
+            <strong><?php echo $total_en_curso; ?></strong>
             <span>En curso</span>
         </article>
     </section>
@@ -61,7 +57,7 @@ $nombre = $_SESSION['nombre'] ?? $_SESSION['usuario'];
                     <article class="client-job-item">
                         <div>
                             <h3><?php echo htmlspecialchars($trabajo['titulo']); ?></h3>
-                            <p><?php echo htmlspecialchars(obtener_etiqueta_tipo($trabajo['tipo'])); ?> · <?php echo htmlspecialchars($trabajo['fecha']); ?></p>
+                            <p><?php echo htmlspecialchars(obtener_etiqueta_tipo($trabajo['tipo'])); ?> · <?php echo htmlspecialchars(formatear_fecha_es($trabajo['fecha'])); ?></p>
                         </div>
                         <span class="status-pill status-<?php echo strtolower(str_replace(' ', '-', $trabajo['estado'])); ?>"><?php echo htmlspecialchars($trabajo['estado']); ?></span>
                     </article>

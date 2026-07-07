@@ -19,7 +19,8 @@
 
 ## 📋 Requisitos
 
-- **PHP** 7.4 o superior
+- **PHP** 7.4 o superior (con la extensión `pdo_mysql` habilitada)
+- **MySQL / MariaDB** (incluido en XAMPP)
 - **Servidor web** Apache o similar
 - **Navegador moderno** (Chrome, Firefox, Edge, Safari)
 - **Git** (opcional, para control de versiones)
@@ -43,10 +44,14 @@ proyecto-web-main/
 ├── app.js                     # JavaScript del cliente
 │
 ├── includes/
-│   ├── config.php             # Configuración y datos
+│   ├── config.php             # Configuración general (tipos de trabajo desde la BD)
+│   ├── db.php                 # Conexión PDO a MySQL (NUEVO)
 │   ├── header.php             # Encabezado HTML
 │   ├── footer.php             # Pie de página HTML
-│   └── helpers.php            # Funciones auxiliares reutilizables (NUEVO)
+│   └── helpers.php            # Funciones auxiliares reutilizables
+│
+├── database/
+│   └── tecnolink.sql          # Script de creación de la base de datos (NUEVO)
 │
 ├── logs/                      # Carpeta de logs (se crea automáticamente)
 ├── Marketing/                 # Recursos de marketing
@@ -66,14 +71,47 @@ git clone <URL_REPOSITORIO>
 cd proyecto-web-main
 ```
 
-### 2. Configurar servidor local
-- Colocar en `/var/www/html/` (Linux) o `C:/xampp/htdocs/` (Windows)
-- O usar `php -S localhost:8000` para servidor de desarrollo
+### 2. Colocar el proyecto en XAMPP
+- Copiá toda la carpeta dentro de `C:/xampp/htdocs/` (Windows) o `/opt/lampp/htdocs/` (Linux).
+- Abrí el **Panel de control de XAMPP** e iniciá los módulos **Apache** y **MySQL**.
 
-### 3. Acceder a la aplicación
+### 3. Crear la base de datos
+1. Con MySQL corriendo, entrá a **phpMyAdmin**: `http://localhost/phpmyadmin`
+2. Pestaña **Importar** → elegí el archivo `database/tecnolink.sql` de este proyecto → **Continuar**.
+   - Esto crea la base `tecnolink`, todas las tablas y carga los datos de ejemplo (trabajos, reseñas y los 2 usuarios de prueba).
+3. Revisá `includes/db.php`: por defecto usa usuario `root` y contraseña vacía (la configuración típica de XAMPP). Si tu instalación tiene otra contraseña, cambiala ahí.
+
+### 4. Acceder a la aplicación
 ```
 http://localhost/proyecto-web-main/
 ```
+
+Si ves el mensaje "No se pudo conectar a la base de datos", verificá que:
+- El módulo **MySQL** esté iniciado en el panel de XAMPP.
+- La base `tecnolink` exista (paso 3).
+- Los datos de `includes/db.php` coincidan con tu usuario/contraseña de MySQL.
+
+---
+
+## 🗄️ Base de datos
+
+El proyecto ya no guarda los datos en arrays fijos dentro del código: ahora usa **MySQL** a través de **PDO** con consultas preparadas (para evitar inyección SQL).
+
+| Tabla | Para qué sirve |
+|-------|-----------------|
+| `usuarios` | Cuentas de clientes. Las contraseñas se guardan con `password_hash()`, nunca en texto plano. |
+| `trabajos` | Los avisos que se listan en `index.php` y los trabajos de cada cliente en `cliente.php`. |
+| `tipos_trabajo` | Catálogo de especialidades (computadoras, redes, celulares, etc.). |
+| `resenas` | Reseñas de clientes mostradas en `index.php` y `cliente.php`. |
+| `solicitudes_contacto` | Cada envío del formulario de `contacto.php` queda guardado acá. |
+| `postulaciones_cv` | Cada envío del formulario de `cv.php` queda guardado acá. |
+
+Archivos clave:
+- `database/tecnolink.sql` — script para crear todo desde cero (importar en phpMyAdmin).
+- `includes/db.php` — conexión PDO reutilizable (`obtener_conexion()`).
+- `includes/config.php` — ya no define arrays de datos; solo carga `tipos_trabajo` desde la base.
+
+**Nota de seguridad:** `includes/db.php` trae contraseña vacía porque así viene XAMPP por defecto. Si este proyecto se sube a un hosting real, cambiá esas credenciales y considerá usar variables de entorno en vez de dejarlas escritas en el archivo.
 
 ---
 
@@ -298,7 +336,8 @@ Para reportar problemas o sugerencias:
 
 ## 🎯 Próximas Fases
 
-- [ ] Integración con base de datos real
+- [x] Integración con base de datos real (MySQL vía PDO)
+- [ ] Registro de nuevos usuarios (hoy solo hay login contra usuarios ya cargados)
 - [ ] Sistema de pagos en línea
 - [ ] Notificaciones por email
 - [ ] App móvil nativa

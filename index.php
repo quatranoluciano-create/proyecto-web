@@ -5,16 +5,37 @@ $busqueda = trim($_GET['q'] ?? '');
 $filtro_tipo = $_GET['tipo'] ?? '';
 $filtro_zona = trim($_GET['zona'] ?? '');
 
-$trabajos_filtrados = array_filter($trabajos_destacados, function ($trabajo) use ($busqueda, $filtro_tipo, $filtro_zona) {
-    $coincide_busqueda = $busqueda === ''
-        || stripos($trabajo['titulo'], $busqueda) !== false
-        || stripos($trabajo['descripcion'], $busqueda) !== false;
+// Armamos la consulta de forma dinámica pero siempre con parámetros
+// preparados (nunca concatenando texto del usuario en el SQL).
+$sql = 'SELECT id, titulo, zona, tipo, modalidad, descripcion, urgente, fecha
+        FROM trabajos
+        WHERE 1 = 1';
+$parametros = [];
 
-    $coincide_tipo = $filtro_tipo === '' || $trabajo['tipo'] === $filtro_tipo;
-    $coincide_zona = $filtro_zona === '' || stripos($trabajo['zona'], $filtro_zona) !== false;
+if ($busqueda !== '') {
+    $sql .= ' AND (titulo LIKE :busqueda OR descripcion LIKE :busqueda2)';
+    $parametros['busqueda'] = '%' . $busqueda . '%';
+    $parametros['busqueda2'] = '%' . $busqueda . '%';
+}
 
-    return $coincide_busqueda && $coincide_tipo && $coincide_zona;
-});
+if ($filtro_tipo !== '') {
+    $sql .= ' AND tipo = :tipo';
+    $parametros['tipo'] = $filtro_tipo;
+}
+
+if ($filtro_zona !== '') {
+    $sql .= ' AND zona LIKE :zona';
+    $parametros['zona'] = '%' . $filtro_zona . '%';
+}
+
+$sql .= ' ORDER BY fecha DESC';
+
+$pdo = obtener_conexion();
+$consulta = $pdo->prepare($sql);
+$consulta->execute($parametros);
+$trabajos_filtrados = $consulta->fetchAll();
+
+$reseñas = $pdo->query('SELECT nombre, trabajo_titulo AS trabajo, estrellas, texto FROM resenas ORDER BY creado_en DESC')->fetchAll();
 
 $total = count($trabajos_filtrados);
 $titulo_pagina = 'Buscar trabajos técnicos';
@@ -115,7 +136,7 @@ require_once __DIR__ . '/includes/header.php';
                         </ul>
                         <p><?php echo htmlspecialchars($trabajo['descripcion']); ?></p>
                         <div class="job-card-footer">
-                            <span class="job-date">Publicado el <?php echo htmlspecialchars($trabajo['fecha']); ?></span>
+                            <span class="job-date">Publicado el <?php echo htmlspecialchars(formatear_fecha_es($trabajo['fecha'])); ?></span>
                             <a href="contacto.php" class="btn-secondary">Solicitar técnico</a>
                         </div>
                     </article>

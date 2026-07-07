@@ -15,7 +15,24 @@ if (es_post()) {
     } elseif (!es_telefono_valido($telefono)) {
         $error = 'El teléfono debe tener al menos 10 dígitos.';
     } else {
-        $exito = 'Solicitud enviada correctamente. Te contactaremos en la próxima hora.';
+        try {
+            $pdo = obtener_conexion();
+            $insertar = $pdo->prepare(
+                'INSERT INTO solicitudes_contacto (nombre, telefono, tipo_servicio, descripcion)
+                 VALUES (:nombre, :telefono, :tipo_servicio, :descripcion)'
+            );
+            $insertar->execute([
+                'nombre' => $nombre,
+                'telefono' => $telefono,
+                'tipo_servicio' => $tipo_servicio,
+                'descripcion' => $descripcion,
+            ]);
+            $exito = 'Solicitud enviada correctamente. Te contactaremos en la próxima hora.';
+            $_POST = [];
+        } catch (PDOException $e) {
+            registrar_error('Error al guardar solicitud de contacto: ' . $e->getMessage());
+            $error = 'Ocurrió un problema al guardar tu solicitud. Probá de nuevo en unos minutos.';
+        }
     }
 }
 

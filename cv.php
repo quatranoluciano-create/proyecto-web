@@ -23,7 +23,32 @@ if (es_post()) {
     } elseif (!es_telefono_valido($telefono)) {
         $error = 'El teléfono debe tener al menos 10 dígitos.';
     } else {
-        $exito = '¡CV enviado correctamente! Te contactaremos pronto.';
+        try {
+            $pdo = obtener_conexion();
+            $insertar = $pdo->prepare(
+                'INSERT INTO postulaciones_cv
+                    (nombre, email, telefono, zona, especialidad, experiencia, habilidades, certificaciones, disponibilidad, referencias)
+                 VALUES
+                    (:nombre, :email, :telefono, :zona, :especialidad, :experiencia, :habilidades, :certificaciones, :disponibilidad, :referencias)'
+            );
+            $insertar->execute([
+                'nombre' => $nombre,
+                'email' => $email,
+                'telefono' => $telefono,
+                'zona' => $zona,
+                'especialidad' => $especialidad,
+                'experiencia' => $experiencia,
+                'habilidades' => $habilidades,
+                'certificaciones' => $certificaciones,
+                'disponibilidad' => $disponibilidad,
+                'referencias' => $referencias,
+            ]);
+            $exito = '¡CV enviado correctamente! Te contactaremos pronto.';
+            $_POST = [];
+        } catch (PDOException $e) {
+            registrar_error('Error al guardar postulación de CV: ' . $e->getMessage());
+            $error = 'Ocurrió un problema al guardar tu CV. Probá de nuevo en unos minutos.';
+        }
     }
 }
 
