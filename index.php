@@ -37,6 +37,14 @@ $trabajos_filtrados = $consulta->fetchAll();
 
 $reseñas = $pdo->query('SELECT nombre, trabajo_titulo AS trabajo, estrellas, texto FROM resenas ORDER BY creado_en DESC')->fetchAll();
 
+$promedio_estrellas = 0;
+$total_resenas = count($reseñas);
+if ($total_resenas > 0) {
+    $suma_estrellas = array_sum(array_column($reseñas, 'estrellas'));
+    $promedio_estrellas = round($suma_estrellas / $total_resenas, 1);
+}
+
+
 $total = count($trabajos_filtrados);
 $titulo_pagina = 'Buscar trabajos técnicos';
 require_once __DIR__ . '/includes/header.php';
@@ -146,8 +154,17 @@ require_once __DIR__ . '/includes/header.php';
     </section>
 
     <section id="reseñas" class="reviews-section">
-        <h2>Reseñas de trabajos anteriores</h2>
-        <p class="section-text">Lo que dicen nuestros clientes después de cada servicio técnico.</p>
+            <h2>Reseñas de trabajos anteriores</h2>
+            <?php if ($total_resenas > 0) : ?>
+            <p class="reviews-average">
+                <span class="average-number"><?php echo $promedio_estrellas; ?></span>
+                <span class="average-stars" aria-label="<?php echo $promedio_estrellas; ?> de 5 estrellas">
+            <?php echo str_repeat('★', (int) round($promedio_estrellas)) . str_repeat('☆', 5 - (int) round($promedio_estrellas)); ?>
+                </span>
+            <span class="average-count">(<?php echo $total_resenas; ?> reseña<?php echo $total_resenas === 1 ? '' : 's'; ?>)</span>
+            </p>
+        <?php endif; ?>
+    <p class="section-text">Lo que dicen nuestros clientes después de cada servicio técnico.</p>
         <div class="reviews-grid">
             <?php foreach ($reseñas as $reseña) : ?>
                 <article class="review-card">

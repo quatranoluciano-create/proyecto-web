@@ -1265,6 +1265,27 @@ section h2 {
     padding: 60px 40px 0;
 }
 
+.reviews-average {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0.5rem 0;
+}
+.average-number {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #1e293b;
+}
+.average-stars {
+    color: #f59e0b;
+    font-size: 1.3rem;
+    letter-spacing: 1px;
+}
+.average-count {
+    color: #64748b;
+    font-size: 0.9rem;
+}
+
 .footer-main {
     display: grid;
     grid-template-columns: 1.6fr 1fr 1fr 1.2fr;
