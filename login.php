@@ -59,6 +59,10 @@ require_once __DIR__ . '/includes/header.php';
             <p>demo@tecnolink.com / demo123</p>
         </div>
 
+        <div class="auth-hint">
+        <p>¿No tenés cuenta? <a href="registro.php">Registrate acá</a>.</p>
+        </div>
+
         <a href="index.php" class="back-link">Volver al inicio</a>
     </section>
 </main>

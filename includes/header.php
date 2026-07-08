@@ -24,6 +24,7 @@ $pagina_actual = basename($_SERVER['PHP_SELF']);
                 <a href="logout.php" class="nav-muted">Salir</a>
             <?php else : ?>
                 <a href="login.php" class="nav-cta<?php echo $pagina_actual === 'login.php' ? ' active' : ''; ?>">Iniciar sesión</a>
+                <a href="registro.php" class="nav-cta<?php echo $pagina_actual === 'registro.php' ? ' active' : ''; ?>">Registrarse</a>
             <?php endif; ?>
         </nav>
     </header>
