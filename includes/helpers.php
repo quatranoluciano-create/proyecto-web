@@ -37,6 +37,18 @@ function validar_longitud(string $texto, int $min, int $max = PHP_INT_MAX): bool
     return $longitud >= $min && $longitud <= $max;
 }
 
+function es_clave_segura(string $clave): bool
+{
+    if (strlen($clave) < 8) {
+        return false;
+    }
+    $tiene_mayuscula = preg_match('/[A-Z]/', $clave);
+    $tiene_minuscula = preg_match('/[a-z]/', $clave);
+    $tiene_numero = preg_match('/[0-9]/', $clave);
+
+    return $tiene_mayuscula && $tiene_minuscula && $tiene_numero;
+}
+
 /**
  * Obtiene etiqueta de tipo de trabajo
  */

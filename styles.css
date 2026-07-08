@@ -1286,6 +1286,12 @@ section h2 {
     font-size: 0.9rem;
 }
 
+.field-hint {
+    font-size: 0.8rem;
+    color: #64748b;
+    margin-top: -0.3rem;
+}
+
 .footer-main {
     display: grid;
     grid-template-columns: 1.6fr 1fr 1fr 1.2fr;

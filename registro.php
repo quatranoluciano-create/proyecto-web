@@ -20,8 +20,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $error = 'El nombre debe tener entre 2 y 100 caracteres.';
     } elseif (!es_email_valido($email)) {
         $error = 'El email no es válido.';
-    } elseif (!validar_longitud($clave, 6)) {
-        $error = 'La contraseña debe tener al menos 6 caracteres.';
+    } elseif (!es_clave_segura($clave)) {
+        $error = 'La contraseña debe tener al menos 8 caracteres, con mayúscula, minúscula y un número.';
     } elseif ($clave !== $clave_confirmar) {
         $error = 'Las contraseñas no coinciden.';
     } else {
@@ -81,7 +81,8 @@ require_once __DIR__ . '/includes/header.php';
                    value="<?php echo obtener_valor($_POST, 'email'); ?>">
 
             <label for="clave">Contraseña</label>
-            <input type="password" id="clave" name="clave" placeholder="Mínimo 6 caracteres" required>
+            <input type="password" id="clave" name="clave" placeholder="Mínimo 8 caracteres" required minlength="8">
+            <small class="field-hint">Debe incluir mayúscula, minúscula y un número.</small>
 
             <label for="clave_confirmar">Confirmar contraseña</label>
             <input type="password" id="clave_confirmar" name="clave_confirmar" placeholder="Repetí tu contraseña" required>
