@@ -337,7 +337,7 @@ Para reportar problemas o sugerencias:
 ## 🎯 Próximas Fases
 
 - [x] Integración con base de datos real (MySQL vía PDO)
-- [ ] Registro de nuevos usuarios (hoy solo hay login contra usuarios ya cargados)
+- [x] Registro de nuevos usuarios (hoy solo hay login contra usuarios ya cargados)
 - [ ] Sistema de pagos en línea
 - [ ] Notificaciones por email
 - [ ] App móvil nativa
